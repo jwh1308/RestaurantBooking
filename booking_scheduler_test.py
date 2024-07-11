@@ -4,35 +4,43 @@ from datetime import datetime
 from booking_scheduler import BookingScheduler
 from schedule import Schedule, Customer
 
+CAPACITY_PER_HOUR = 10
+UNDER_CAPACITY = 6
 
-def create_datetime(__date_string):
-    my_datetime = datetime.strptime(__date_string, '%Y/%m/%d %H:%M')
-    return my_datetime
+NOT_ON_THE_HOUR = datetime.strptime('2024/7/20 10:47', '%Y/%m/%d %H:%M')
+ON_THE_HOUR = datetime.strptime('2024/7/20 11:00', '%Y/%m/%d %H:%M')
+CUSTOMER = Customer('jwh', '0')
 
 
 class BookingSchedulerTest(unittest.TestCase):
 
+    def setUp(self):
+        super().setUp()
+        self.scheduler = BookingScheduler(CAPACITY_PER_HOUR)
+
     def test_예약은_정시에만_가능하다_정시가_아닌경우_예약불가(self):
-        my_datetime = create_datetime('2024/7/20 10:47')
-        customer = Customer('jwh', '0')
-        schedule = Schedule(my_datetime, 2, customer)
-        scheduler = BookingScheduler(10)
+        schedule = Schedule(NOT_ON_THE_HOUR, UNDER_CAPACITY, CUSTOMER)
 
         with self.assertRaises(ValueError):
-            scheduler.add_schedule(schedule)
+            self.scheduler.add_schedule(schedule)
 
     def test_예약은_정시에만_가능하다_정시인_경우_예약가능(self):
-        my_datetime = create_datetime('2024/7/20 11:00')
-        customer = Customer('jwh', '0')
-        schedule = Schedule(my_datetime, 2, customer)
-        scheduler = BookingScheduler(10)
+        schedule = Schedule(ON_THE_HOUR, UNDER_CAPACITY, CUSTOMER)
 
-        scheduler.add_schedule(schedule)
+        self.scheduler.add_schedule(schedule)
 
-        self.assertTrue(scheduler.has_schedule(schedule))
+        self.assertTrue(self.scheduler.has_schedule(schedule))
 
     def test_시간대별_인원제한이_있다_같은_시간대에_Capacity_초과할_경우_예외발생(self):
-        pass
+        schedule = Schedule(ON_THE_HOUR, UNDER_CAPACITY, CUSTOMER)
+        self.scheduler.add_schedule(schedule)
+        expected = 'Number of people is over restaurant capacity per hour'
+
+        with self.assertRaises(ValueError) as context:
+            new_schedule = Schedule(ON_THE_HOUR, UNDER_CAPACITY, CUSTOMER)
+            self.scheduler.add_schedule(new_schedule)
+
+        self.assertEqual(expected, str(context.exception))
 
     def test_시간대별_인원제한이_있다_같은_시간대가_다르면_Capacity_차있어도_스케쥴_추가_성공(self):
         pass
