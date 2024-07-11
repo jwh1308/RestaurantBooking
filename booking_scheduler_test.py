@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime, timedelta
 
 from booking_scheduler import BookingScheduler
+from communication_test import TestableSmsSender
 from schedule import Schedule, Customer
 
 CAPACITY_PER_HOUR = 10
@@ -53,7 +54,13 @@ class BookingSchedulerTest(unittest.TestCase):
         self.assertTrue(self.scheduler.has_schedule(new_schedule))
 
     def test_예약완료시_SMS는_무조건_발송(self):
-        pass
+        testable_sender = TestableSmsSender()
+        schedule = Schedule(ON_THE_HOUR, UNDER_CAPACITY, CUSTOMER)
+        self.scheduler.set_sms_sender(testable_sender)
+
+        self.scheduler.add_schedule(schedule)
+
+        self.assertTrue(testable_sender.is_send_method_is_called())
 
     def test_이메일이_없는_경우에는_이메일_미발송(self):
         pass
