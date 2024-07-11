@@ -44,19 +44,3 @@ class BookingScheduler:
 
     def set_mail_sender(self, mail_sender):
         self.mail_sender = mail_sender
-
-
-class SundayBookingScheduler(BookingScheduler):
-    def __init__(self, capacity_per_hour):
-        super().__init__(capacity_per_hour)
-
-    def get_now(self):
-        return datetime.strptime('2024/7/21 11:00', '%Y/%m/%d %H:%M')
-
-
-class MondayBookingScheduler(BookingScheduler):
-    def __init__(self, capacity_per_hour):
-        super().__init__(capacity_per_hour)
-
-    def get_now(self):
-        return datetime.strptime('2024/7/15 11:00', '%Y/%m/%d %H:%M')
