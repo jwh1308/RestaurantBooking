@@ -5,10 +5,15 @@ from booking_scheduler import BookingScheduler
 from schedule import Schedule, Customer
 
 
+def create_datetime(__date_string):
+    my_datetime = datetime.strptime(__date_string, '%Y/%m/%d %H:%M')
+    return my_datetime
+
+
 class BookingSchedulerTest(unittest.TestCase):
 
     def test_예약은_정시에만_가능하다_정시가_아닌경우_예약불가(self):
-        my_datetime = datetime.strptime('2024/7/20 10:47', '%Y/%m/%d %H:%M')
+        my_datetime = create_datetime('2024/7/20 10:47')
         customer = Customer('jwh', '0')
         schedule = Schedule(my_datetime, 2, customer)
         scheduler = BookingScheduler(10)
@@ -17,7 +22,14 @@ class BookingSchedulerTest(unittest.TestCase):
             scheduler.add_schedule(schedule)
 
     def test_예약은_정시에만_가능하다_정시인_경우_예약가능(self):
-        pass
+        my_datetime = create_datetime('2024/7/20 11:00')
+        customer = Customer('jwh', '0')
+        schedule = Schedule(my_datetime, 2, customer)
+        scheduler = BookingScheduler(10)
+
+        scheduler.add_schedule(schedule)
+
+        self.assertTrue(scheduler.has_schedule(schedule))
 
     def test_시간대별_인원제한이_있다_같은_시간대에_Capacity_초과할_경우_예외발생(self):
         pass
