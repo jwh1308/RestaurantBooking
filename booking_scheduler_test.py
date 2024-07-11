@@ -1,10 +1,20 @@
 import unittest
+from datetime import datetime
+
+from booking_scheduler import BookingScheduler
+from schedule import Schedule, Customer
 
 
 class BookingSchedulerTest(unittest.TestCase):
 
     def test_예약은_정시에만_가능하다_정시가_아닌경우_예약불가(self):
-        pass
+        my_datetime = datetime.strptime('2024/7/20 10:47', '%Y/%m/%d %H:%M')
+        customer = Customer('jwh', '0')
+        schedule = Schedule(my_datetime, 2, customer)
+        scheduler = BookingScheduler(10)
+
+        with self.assertRaises(ValueError):
+            scheduler.add_schedule(schedule)
 
     def test_예약은_정시에만_가능하다_정시인_경우_예약가능(self):
         pass
